@@ -1,6 +1,8 @@
 Revision history for Plack-Middleware-PyeLogger
 
 {{$NEXT}}
+
+2.000000  2015-08-18 19:54:50+03:00 Asia/Jerusalem
 	- Updated according to changes in Pye v2.0.0, specifically,
 	  the "backend" key must be provided when enabling the middleware.
 
