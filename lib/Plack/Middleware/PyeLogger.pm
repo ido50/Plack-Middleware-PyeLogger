@@ -7,10 +7,10 @@ use strict;
 use warnings;
 
 use Carp;
-use Plack::Util::Accessor qw/logger opts/;
+use Plack::Util::Accessor qw/logger backend opts/;
 use Pye;
 
-our $VERSION = "1.000000";
+our $VERSION = "2.000000";
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -20,7 +20,7 @@ Plack::Middleware::PyeLogger - Use Pye as a Plack logger
 =head1 SYNOPSIS
 
 	builder {
-		enable 'PyeLogger', opts => \%opts;
+		enable 'PyeLogger', backend => 'MongoDB', opts => \%opts;
 		$app;
 	};
 
@@ -55,10 +55,13 @@ Generates an instance of L<Pye>.
 sub prepare_app {
 	my $self = shift;
 
+	$self->backend('MongoDB')
+		unless $self->backend;
+
 	$self->opts({})
 		unless $self->opts;
 
-	$self->logger(Pye->new(%{$self->opts}));
+	$self->logger(Pye->new($self->backend, %{$self->opts}));
 }
 
 =head2 call( \%env )
@@ -86,11 +89,14 @@ sub call {
 
 =head1 CONFIGURATION
 
-You can pass any options L<Pye> accepts in its C<new()> constructor as a hash-ref, under
-the B<opts> key. For example:
+You need to pass the C<Pye> backend to use (e.g. C<MongoDB> for L<Pye::MongoDB>, which is the
+default for backwards compatibility reasons), and optionally a hash-ref of options. These can
+be anything the respective backend constructor accepts. For example:
 
 	builder {
-		enable 'PyeLogger', opts => { log_coll => 'logsssss!!!!!!' };
+		enable 'PyeLogger',
+			backend => 'MongoDB',
+			opts => { host => 'mongodb://logserver:27017', log_coll => 'logsssss!!!!!!' };
 		$app;
 	};
 

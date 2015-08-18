@@ -7,7 +7,7 @@ use HTTP::Request::Common;
 use MongoDB;
 use Plack::Middleware::PyeLogger;
 use Plack::Test;
-use Test::More tests => 3;
+use Test::More tests => 2;
 
 my $conn;
 eval { $conn = MongoDB::MongoClient->new; };
@@ -32,10 +32,10 @@ SKIP: {
 	};
 
 	$app = Plack::Middleware::PyeLogger->wrap($app,
+		backend => 'MongoDB',
 		opts => {
-			log_db => 'test',
-			log_coll => 'pye_logs',
-			session_coll => 'pye_sessions',
+			database => 'test',
+			collection => 'pye_test_logs',
 			be_safe => 1
 		}
 	);
@@ -44,21 +44,16 @@ SKIP: {
 		my $cb = shift;
 
 		my $db = $conn->get_database('test');
-		my $lcoll = $db->get_collection('pye_logs');
-		my $scoll = $db->get_collection('pye_sessions');
+		my $coll = $db->get_collection('pye_test_logs');
 
 		my $res = $cb->(GET "/");
 
-		my @logs = $lcoll->find->sort({ date => -1 })->all;
+		my @logs = $coll->find->sort({ date => 1 })->all;
 
 		is($logs[0]->{text}, 'Message #1', 'first message logged');
 		is_deeply($logs[1]->{data}, { some => 'data' }, 'second message logged');
 
-		my @sessions = $scoll->find->all;
-		is($sessions[0]->{_id}, '1', 'only session exists');
-
-		$lcoll->drop;
-		$scoll->drop;
+		$coll->drop;
 	};
 }
 
