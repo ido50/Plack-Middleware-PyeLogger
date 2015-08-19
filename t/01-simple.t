@@ -15,7 +15,7 @@ eval { $conn = MongoDB::MongoClient->new; };
 SKIP: {
 	if ($@) {
 		diag("MongoDB needs to be running for this test.");
-		skip("MongoDB needs to be running for this test.", 3);
+		skip("MongoDB needs to be running for this test.", 2);
 	}
 
 	my @messages = (
