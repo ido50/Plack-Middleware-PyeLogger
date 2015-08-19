@@ -10,7 +10,7 @@ use Carp;
 use Plack::Util::Accessor qw/logger backend opts/;
 use Pye;
 
-our $VERSION = "2.000000";
+our $VERSION = "2.000001";
 $VERSION = eval $VERSION;
 
 =head1 NAME
