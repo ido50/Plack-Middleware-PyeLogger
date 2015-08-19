@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
             builder {
-                    enable 'PyeLogger', opts => \%opts;
+                    enable 'PyeLogger', backend => 'MongoDB', opts => \%opts;
                     $app;
             };
 
@@ -32,11 +32,15 @@ METHODS
     Creates the "psgix.logger" subroutine for your app.
 
 CONFIGURATION
-    You can pass any options Pye accepts in its "new()" constructor as a
-    hash-ref, under the opts key. For example:
+    You need to pass the "Pye" backend to use (e.g. "MongoDB" for
+    Pye::MongoDB, which is the default for backwards compatibility reasons),
+    and optionally a hash-ref of options. These can be anything the
+    respective backend constructor accepts. For example:
 
             builder {
-                    enable 'PyeLogger', opts => { log_coll => 'logsssss!!!!!!' };
+                    enable 'PyeLogger',
+                            backend => 'MongoDB',
+                            opts => { host => 'mongodb://logserver:27017', log_coll => 'logsssss!!!!!!' };
                     $app;
             };
 
